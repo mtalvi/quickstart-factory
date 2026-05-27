@@ -1,4 +1,4 @@
-# Permitir que Gemini vea las carpetas de trabajo ignoradas por Git
+# Allow gemini to see ignored folders by git
 !base/
 !projects/
 !projects/**

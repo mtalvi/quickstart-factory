@@ -13,7 +13,8 @@ Generate blog post drafts for completed AI Quickstarts. Outputs to `data/blog-dr
 
 1. **Identify candidate:** Use `gh-backlog-reader --issue <N>` to view the issue, its comments, and linked repositories.
 2. **Gather context:** If a linked implementation repo exists (auto-extracted from comments), browse the repo README and code to understand what the quickstart does, its architecture, and how to run it.
-3. **Draft the blog post:** Use the format and template below.
+3. **Study reference examples:** Fetch the example blog posts listed in [references/blog-examples.md](references/blog-examples.md) using WebFetch. Analyze their structure, tone, and business framing. Use them as stylistic guides — match their narrative depth and enterprise perspective, not just the template structure.
+4. **Draft the blog post:** Use the format and template below.
 
 Issues with an implementation repo linked in the comments are prime candidates for blog posts — the quickstart is being built or is already done.
 
@@ -40,3 +41,4 @@ Include in every blog post:
 
 - **Template:** [assets/blog-template.md](assets/blog-template.md)
 - **Messaging:** [references/messaging-guidelines.md](references/messaging-guidelines.md)
+- **Examples:** [references/blog-examples.md](references/blog-examples.md)
