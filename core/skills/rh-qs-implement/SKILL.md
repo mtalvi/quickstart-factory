@@ -101,7 +101,7 @@ Working application code with `make lint && make test` succeeding.
 
 ## Next skill
 
-When vertical slice works locally → **`rh-qs-deploy`**
+When vertical slice works locally → **`rh-qs-verify-build`**
 
 ## References
 

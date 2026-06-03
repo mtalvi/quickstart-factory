@@ -67,7 +67,7 @@ Ask until every PRD section can be filled:
 ### Check backlog
 
 ```bash
-python3 core/skills/rh-qs-gh-backlog-reader/scripts/read_backlog.py --search "<keywords>"
+python3 core/skills/gh-backlog-reader/scripts/read_backlog.py --search "<keywords>"
 ```
 
 If a matching issue exists, link it and ask whether to extend or create a distinct PRD.

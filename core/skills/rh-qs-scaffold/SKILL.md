@@ -14,7 +14,7 @@ Design document approved from `rh-qs-architect` at `data/designs/<slug>.md`
 
 ## What it does
 
-1. Creates GitHub repository under `rh-ai-quickstart` org via `gh repo create`
+1. Creates a local GitHub repository under git users name. 
 2. Configures branch protection: require CI passing, require 1 review, no direct push to main
 3. Creates directory structure based on the design
 4. Sets up GitHub Actions: CI (lint + unit tests on PR), integration tests on merge, deploy workflow
