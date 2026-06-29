@@ -2,7 +2,7 @@
 ```
 Status: Proposed
 Date: 2026-06-28
-Authors: Matan Talvi
+Authors: Matan Talvi, Yossi Elias
 ```
 
 
