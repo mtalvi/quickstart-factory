@@ -1,40 +1,33 @@
-# Temp-File Namespace Scoping Convention
+# Pipeline File Convention
 
-This document defines how factory skills use temp files to pass structured artifacts between pipeline stages. All temp files are scoped to a project-specific namespace directory to prevent collisions and enable resumability.
+This document defines how factory skills store and pass structured artifacts between pipeline stages. All pipeline files live in a persistent, project-scoped directory inside the quickstart repo — ensuring a full audit trail that survives reboots and is deleted only when the user chooses.
 
-## Namespace Structure
+## Directory Structure
 
-All temp files live under a project-scoped directory:
+All pipeline files live under:
 
 ```
-/tmp/qs-<slug>/
+{project}/.rhoai/pipeline/
 ```
 
-**Example:** `/tmp/qs-spending-transaction-monitor/`
+**Example:** `spending-transaction-monitor/.rhoai/pipeline/`
 
-The `<slug>` is the lowercase, hyphenated project identifier — the same value used in PRD filenames (`data/prds/<slug>.md`) and repo names.
+The `.rhoai/` directory is gitignored by default, so pipeline files never end up in commits.
 
-## Constructing the Scoped Path
+## Constructing the Path
 
-Skills construct temp paths using the slug from their input (typically from the upstream spec or manifest):
+Skills construct the pipeline path relative to the project root:
 
 ```bash
-QS_SLUG="spending-transaction-monitor"
-QS_TMP="/tmp/qs-${QS_SLUG}"
-mkdir -p "$QS_TMP"
+QS_PIPELINE=".rhoai/pipeline"
+mkdir -p "$QS_PIPELINE"
 ```
 
-The slug is derived from the quickstart name:
-- Lowercase all characters
-- Replace spaces with hyphens
-- Remove special characters
-- Example: `"Spending Transaction Monitor"` -> `spending-transaction-monitor`
-
-Every skill that reads or writes temp files must use the `QS_TMP` prefix. Hardcoding `/tmp/` paths without the `qs-<slug>/` prefix is a bug.
+Every skill that reads or writes pipeline files must use this path. Hardcoding paths outside `.rhoai/pipeline/` is a bug.
 
 ## File Categories
 
-Four categories of temp files exist within `/tmp/qs-<slug>/`:
+Four categories of pipeline files exist within `.rhoai/pipeline/`:
 
 ### 1. Spec files
 
@@ -77,7 +70,7 @@ Note: `architecture-spec.yaml` serves double duty — it is both the architect's
 
 ### 3. Internal working files
 
-Temp files used within a single skill's execution, not consumed by other skills.
+Files used within a single skill's execution, not consumed by other skills.
 
 | File Pattern | Skill | Purpose |
 |-------------|-------|---------|
@@ -114,10 +107,10 @@ Debug and fix files append `attempt_N` keys — they never overwrite previous at
 
 ## Directory Layout Example
 
-A fully populated temp directory mid-pipeline looks like:
+A fully populated pipeline directory mid-pipeline looks like:
 
 ```
-/tmp/qs-spending-transaction-monitor/
+.rhoai/pipeline/
 ├── discovery-spec.yaml
 ├── architecture-spec.yaml              # Also the handoff to scaffold
 ├── architecture-spec-refined.yaml
@@ -149,60 +142,42 @@ A fully populated temp directory mid-pipeline looks like:
 
 ### During execution
 
-Skills do NOT clean up temp files during execution. Files accumulate throughout the pipeline run. This is intentional — it creates an audit trail and supports resumability.
+Skills do NOT clean up pipeline files during execution. Files accumulate throughout the pipeline run. This is intentional — it creates a full audit trail and supports resumability.
 
-### On reboot
+### User-controlled cleanup
 
-`/tmp/` is cleared by the operating system on reboot. This means:
-- Temp files do not survive reboots
-- Long-running pipelines that span reboots will lose intermediate state
-
-### Persistent copies
-
-To mitigate the reboot risk, key reports are copied to persistent locations within the project repo:
-
-| Temp File | Persistent Copy | Producing Skill |
-|-----------|----------------|-----------------|
-| `security-report.yaml` | `{project}/.rhoai/security-report.yaml` | rh-qs-security |
-| `deploy-state.yaml` | `{project}/.rhoai/deploy-report.yaml` | rh-qs-debug-and-deploy |
-| `qs-kb-extraction-report.yaml` | `{project}/.rhoai/kb-extraction-report.yaml` | rh-qs-extract-knowledge |
-
-The `.rhoai/` directory in the project repo is gitignored by default. Skills that need post-pipeline access to reports read from `.rhoai/` rather than `/tmp/`.
-
-### Manual cleanup
-
-To reset a project's temp state:
+Pipeline files persist until the user explicitly deletes them. To reset a project's pipeline state:
 
 ```bash
-rm -rf /tmp/qs-<slug>/
+rm -rf .rhoai/pipeline/
 ```
 
-This is safe — it only removes temp files for one quickstart, not others.
+This is safe — it only removes pipeline artifacts, not other `.rhoai/` contents. The user decides when cleanup happens — after shipping, after review, or never.
 
 ## Concurrency
 
 ### Different quickstarts
 
-Different quickstarts use different slugs, so they get separate temp directories. Running `rh-qs-implement` for `spending-transaction-monitor` and `supply-chain-agent` simultaneously is safe — they write to `/tmp/qs-spending-transaction-monitor/` and `/tmp/qs-supply-chain-agent/` respectively.
+Different quickstarts are different repos, so they each have their own `.rhoai/pipeline/`. Running skills for two quickstarts simultaneously is always safe.
 
 ### Same quickstart
 
-Running the same quickstart concurrently (e.g., two agents both running `rh-qs-deploy` for `spending-transaction-monitor`) is NOT safe. Both would write to the same `/tmp/qs-spending-transaction-monitor/deploy-spec.yaml`, causing race conditions.
+Running the same quickstart concurrently (e.g., two agents both running `rh-qs-deploy` for `spending-transaction-monitor`) is NOT safe. Both would write to the same `.rhoai/pipeline/deploy-spec.yaml`, causing race conditions.
 
 This is a known constraint. The factory is designed for one pipeline execution per quickstart at a time.
 
 ## Resumability
 
-When a skill starts, it should check whether its temp directory already contains artifacts from a previous run:
+Since pipeline files are persistent, resumability works naturally. When a skill starts, it checks whether `.rhoai/pipeline/` already contains artifacts from a previous run:
 
 ```
-1. Check if /tmp/qs-<slug>/ exists
+1. Check if .rhoai/pipeline/ exists
 2. If it exists, check for artifacts from this skill and upstream skills
 3. If upstream handoff manifests exist:
    → Check content_hash against the current upstream file (see below)
    → If hashes match: offer to resume from current stage
    → If hashes differ: warn that upstream has changed, offer to re-run
-   → Or start fresh (rm -rf /tmp/qs-<slug>/)
+   → Or start fresh (rm -rf .rhoai/pipeline/)
 4. If this skill's own spec exists:
    → Offer to reuse the existing spec
    → Or regenerate
@@ -215,8 +190,6 @@ Every spec and manifest records a `content_hash` of the upstream files it was bu
 This catches the common case where a user re-runs an early stage (e.g., `rh-qs-architect`) but forgets to re-run the stages that depend on it.
 
 This enables the "pick up where you left off" pattern, especially useful when a skill fails mid-execution and the user restarts it.
-
-For full pipeline resumability across reboots, `rh-qs-handoff` reconstructs state from the project repo (persistent `.rhoai/` files, existing code, PRD) rather than relying on temp files.
 
 ## Relationship to Other Foundation Docs
 
