@@ -46,6 +46,7 @@ Every spec YAML must include these top-level sections:
 
 ```yaml
 # ─── Header ───────────────────────────────────────────────
+spec_version: 1                  # Schema version — bump when fields change
 quickstart_name: "Spending Transaction Monitor"
 slug: spending-transaction-monitor
 skill: rh-qs-architect          # Which skill generated this spec
@@ -80,6 +81,7 @@ validation_rules:
 dependencies:
   - spec: architecture-spec.yaml
     fields_used: [components, deployment_mode]
+    content_hash: "sha256:..."   # Hash of upstream spec when this was generated
 ```
 
 ### Field descriptions
@@ -88,6 +90,7 @@ dependencies:
 
 | Field | Type | Description |
 |-------|------|-------------|
+| `spec_version` | integer | Schema version of this spec format. Starts at 1, bumped when fields are added/changed. Consuming skills check this and fail loudly if they encounter an unsupported version. |
 | `quickstart_name` | string | Human-readable project name |
 | `slug` | string | Lowercase hyphenated identifier, used for temp-file scoping |
 | `skill` | string | The skill that generated this spec (e.g., `rh-qs-architect`) |
@@ -153,6 +156,7 @@ See [acceptance-criteria.md](acceptance-criteria.md) for the full convention. In
 |-------|------|-------------|
 | `spec` | string | Filename of the upstream spec or manifest this spec depends on |
 | `fields_used` | list of strings | Which fields from that spec are referenced |
+| `content_hash` | string | SHA-256 hash of the upstream spec at the time this spec was generated. Used for staleness detection — if the upstream spec changes, downstream skills can detect the mismatch and warn the user. |
 
 ## Validation Flow
 
@@ -214,6 +218,17 @@ When validators find blockers, the main agent:
 
 The refined spec replaces the original as the contract for implementation.
 
+## Staleness Detection
+
+When a skill starts, it checks whether its upstream dependencies have changed since its own spec or manifest was generated:
+
+1. Read each entry in `dependencies`
+2. Hash the current content of the upstream file
+3. Compare to the recorded `content_hash`
+4. If they differ: warn the user that upstream has changed and offer to re-run the current skill with the updated input, or proceed with stale data
+
+This prevents silent inconsistencies when a user re-runs an upstream skill (e.g., re-running `rh-qs-architect` to change the component list) without re-running downstream skills.
+
 ## Post-Implementation Validation
 
 After the implementer subagent produces artifacts, the main agent (or a post-validator subagent) checks each acceptance criterion:
@@ -241,6 +256,7 @@ If any criterion fails, the skill enters its feedback loop (see ADR-001 Pattern 
 This example shows a fully populated spec for the Architect skill (`rh-qs-architect`), converting a PRD into a component bill of materials.
 
 ```yaml
+spec_version: 1
 quickstart_name: "Spending Transaction Monitor"
 slug: spending-transaction-monitor
 skill: rh-qs-architect
@@ -362,6 +378,7 @@ validation_rules:
 dependencies:
   - spec: data/prds/spending-transaction-monitor.md
     fields_used: [problem_statement, target_persona, technology_constraints, success_metrics]
+    content_hash: "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 ```
 
 ## Per-Skill Spec Fields
