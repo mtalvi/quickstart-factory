@@ -199,12 +199,20 @@ When a skill starts, it should check whether its temp directory already contains
 1. Check if /tmp/qs-<slug>/ exists
 2. If it exists, check for artifacts from this skill and upstream skills
 3. If upstream handoff manifests exist:
-   → Offer to resume from current stage
+   → Check content_hash against the current upstream file (see below)
+   → If hashes match: offer to resume from current stage
+   → If hashes differ: warn that upstream has changed, offer to re-run
    → Or start fresh (rm -rf /tmp/qs-<slug>/)
 4. If this skill's own spec exists:
    → Offer to reuse the existing spec
    → Or regenerate
 ```
+
+### Staleness detection via content hash
+
+Every spec and manifest records a `content_hash` of the upstream files it was built from (see [spec-as-contract.md](spec-as-contract.md)). When resuming, a skill hashes the current upstream file and compares it to the recorded hash. If they differ, the downstream artifact is stale — the upstream skill was re-run with different results.
+
+This catches the common case where a user re-runs an early stage (e.g., `rh-qs-architect`) but forgets to re-run the stages that depend on it.
 
 This enables the "pick up where you left off" pattern, especially useful when a skill fails mid-execution and the user restarts it.
 
