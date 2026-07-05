@@ -1,8 +1,8 @@
-# Temp-File Contract Formats
+# Pipeline Contract Formats
 
 This document defines the YAML schema for each inter-skill handoff file. These contracts specify exactly what each file contains, which skill produces it, and which skill consumes it — enabling skills to be developed and validated independently.
 
-Every handoff file follows the common header defined in [spec-as-contract.md](spec-as-contract.md) and lives in the project-scoped temp directory defined in [temp-file-convention.md](temp-file-convention.md).
+Every handoff file follows the common header defined in [spec-as-contract.md](spec-as-contract.md) and lives in the project's `.rhoai-qs/pipeline/` directory as defined in [pipeline-convention.md](pipeline-convention.md).
 
 ## Common Header
 
@@ -399,7 +399,7 @@ dependencies:
 **Consumer:** rh-qs-debug-and-deploy
 **Category:** Report (aggregated scan results)
 
-Aggregates findings from the four parallel security scanners into a single report with severity categories. This file is also persisted to `{project}/.rhoai/security-report.yaml` for the permanent record.
+Aggregates findings from the four parallel security scanners into a single report with severity categories.
 
 ### Schema
 
@@ -415,16 +415,16 @@ overall_status: PASS | PASS_WITH_WARNINGS | BLOCKED
 scanners:
   code:
     status: PASS | FAIL
-    source_file: /tmp/qs-spending-transaction-monitor/qs-security-code.yaml
+    source_file: .rhoai-qs/pipeline/qs-security-code.yaml
   containers:
     status: PASS | FAIL
-    source_file: /tmp/qs-spending-transaction-monitor/qs-security-containers.yaml
+    source_file: .rhoai-qs/pipeline/qs-security-containers.yaml
   helm:
     status: PASS | FAIL
-    source_file: /tmp/qs-spending-transaction-monitor/qs-security-helm.yaml
+    source_file: .rhoai-qs/pipeline/qs-security-helm.yaml
   dependencies:
     status: PASS | FAIL
-    source_file: /tmp/qs-spending-transaction-monitor/qs-security-deps.yaml
+    source_file: .rhoai-qs/pipeline/qs-security-deps.yaml
 
 findings:
   - id: sec-1
@@ -473,7 +473,7 @@ dependencies:
 **Consumer:** rh-qs-document
 **Category:** State (cluster health snapshot)
 
-Captures the final state of all deployed resources after the debug loop completes. This file is also persisted to `{project}/.rhoai/deploy-report.yaml`.
+Captures the final state of all deployed resources after the debug loop completes.
 
 ### Schema
 
@@ -688,6 +688,6 @@ Consuming skills must check `spec_version` on read and fail with a clear error i
 ## Relationship to Other Foundation Docs
 
 - **[spec-as-contract.md](spec-as-contract.md)** — defines the spec format that `architecture-spec.yaml` (file #1) follows fully; other files use the common header and `dependencies` section
-- **[temp-file-convention.md](temp-file-convention.md)** — defines the `/tmp/qs-<slug>/` namespace where all these files live
+- **[pipeline-convention.md](pipeline-convention.md)** — defines the `.rhoai-qs/pipeline/` directory where all these files live
 - **[skill-directory-structure.md](skill-directory-structure.md)** — each skill's `spec-template.md` defines skill-specific fields within these schemas
 - **[acceptance-criteria.md](acceptance-criteria.md)** — defines how `acceptance_criteria` sections in specs are validated
