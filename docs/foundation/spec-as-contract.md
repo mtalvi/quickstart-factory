@@ -38,7 +38,7 @@ All specs are written to the project's pipeline directory:
 .rhoai/pipeline/<skill>-spec-refined.yaml   # After validation feedback
 ```
 
-See [temp-file-convention.md](temp-file-convention.md) for the full scoping rules.
+See [pipeline-convention.md](pipeline-convention.md) for the full scoping rules.
 
 ## Required Fields
 
@@ -399,5 +399,5 @@ Each skill's `spec-template.md` extends the common fields above with skill-speci
 
 - **[skill-directory-structure.md](skill-directory-structure.md)** — each skill's `spec-template.md` file defines the skill-specific fields
 - **[acceptance-criteria.md](acceptance-criteria.md)** — details when user approval is required and how criteria are validated
-- **[temp-file-convention.md](temp-file-convention.md)** — defines the `.rhoai/pipeline/` directory where specs and manifests are written
-- **[temp-file-contracts.md](temp-file-contracts.md)** — defines the output manifests that consuming skills expect (downstream of specs)
+- **[pipeline-convention.md](pipeline-convention.md)** — defines the `.rhoai/pipeline/` directory where specs and manifests are written
+- **[pipeline-contracts.md](pipeline-contracts.md)** — defines the output manifests that consuming skills expect (downstream of specs)

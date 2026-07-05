@@ -64,7 +64,7 @@ Output artifacts that the next pipeline stage consumes. These are the inter-skil
 | `deploy-state.yaml` | rh-qs-debug-and-deploy | rh-qs-document |
 | `doc-manifest.yaml` | rh-qs-document | rh-qs-ship |
 
-See [temp-file-contracts.md](temp-file-contracts.md) for the YAML schema of each handoff file.
+See [pipeline-contracts.md](pipeline-contracts.md) for the YAML schema of each handoff file.
 
 Note: `architecture-spec.yaml` serves double duty — it is both the architect's spec file and the handoff manifest to scaffold.
 
@@ -193,6 +193,6 @@ This enables the "pick up where you left off" pattern, especially useful when a 
 
 ## Relationship to Other Foundation Docs
 
-- **[temp-file-contracts.md](temp-file-contracts.md)** — defines the YAML schema for each handoff manifest
+- **[pipeline-contracts.md](pipeline-contracts.md)** — defines the YAML schema for each handoff manifest
 - **[spec-as-contract.md](spec-as-contract.md)** — defines the spec file format (category 1 above)
 - **[skill-directory-structure.md](skill-directory-structure.md)** — each skill's `output-templates.md` defines the format of its temp file outputs
