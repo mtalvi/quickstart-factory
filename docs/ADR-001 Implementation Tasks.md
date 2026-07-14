@@ -249,7 +249,7 @@ PHASE 7 — EVALUATION & FINALIZATION
 | 10-08 | Create e2e-tester-prompt.md | Write the subagent prompt that runs TEST-PLAN.md end-to-end verification against the deployed namespace. |
 | 10-09 | Create spec-template.md | Define the deploy state format (`/tmp/qs-deploy-state.yaml`) — resource health states, debug attempt history, E2E results. |
 | 10-10 | Create reasoning-guardrails.md | Define concern areas: namespace isolation (every command uses `-n <namespace>`), don't change application intent, dependency-order debugging, max 3 attempts per resource. |
-| 10-11 | Write SKILL.md orchestrator | Write SKILL.md that orchestrates the full workflow: access validation → project analysis → deploy → health scan → debug loop (per resource, max 3 attempts) → E2E test → final report. Copy persistent report to `{project}/.rhoai/deploy-report.yaml`. |
+| 10-11 | Write SKILL.md orchestrator | Write SKILL.md that orchestrates the full workflow: access validation → project analysis → deploy → health scan → debug loop (per resource, max 3 attempts) → E2E test → final report. Copy persistent report to `{project}/.rhoai-qs/deploy-report.yaml`. |
 | 10-12 | Validate with skill-validator | Run `skill-validator --strict` against SKILL.md. |
 
 ---

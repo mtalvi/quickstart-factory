@@ -7,27 +7,27 @@ This document defines how factory skills store and pass structured artifacts bet
 All pipeline files live under:
 
 ```
-{project}/.rhoai/pipeline/
+{project}/.rhoai-qs/pipeline/
 ```
 
-**Example:** `spending-transaction-monitor/.rhoai/pipeline/`
+**Example:** `spending-transaction-monitor/.rhoai-qs/pipeline/`
 
-The `.rhoai/` directory is gitignored by default, so pipeline files never end up in commits.
+The `.rhoai-qs/` directory is gitignored by default, so pipeline files never end up in commits.
 
 ## Constructing the Path
 
 Skills construct the pipeline path relative to the project root:
 
 ```bash
-QS_PIPELINE=".rhoai/pipeline"
+QS_PIPELINE=".rhoai-qs/pipeline"
 mkdir -p "$QS_PIPELINE"
 ```
 
-Every skill that reads or writes pipeline files must use this path. Hardcoding paths outside `.rhoai/pipeline/` is a bug.
+Every skill that reads or writes pipeline files must use this path. Hardcoding paths outside `.rhoai-qs/pipeline/` is a bug.
 
 ## File Categories
 
-Four categories of pipeline files exist within `.rhoai/pipeline/`:
+Four categories of pipeline files exist within `.rhoai-qs/pipeline/`:
 
 ### 1. Spec files
 
@@ -110,7 +110,7 @@ Debug and fix files append `attempt_N` keys — they never overwrite previous at
 A fully populated pipeline directory mid-pipeline looks like:
 
 ```
-.rhoai/pipeline/
+.rhoai-qs/pipeline/
 ├── discovery-spec.yaml
 ├── architecture-spec.yaml              # Also the handoff to scaffold
 ├── architecture-spec-refined.yaml
@@ -149,35 +149,35 @@ Skills do NOT clean up pipeline files during execution. Files accumulate through
 Pipeline files persist until the user explicitly deletes them. To reset a project's pipeline state:
 
 ```bash
-rm -rf .rhoai/pipeline/
+rm -rf .rhoai-qs/pipeline/
 ```
 
-This is safe — it only removes pipeline artifacts, not other `.rhoai/` contents. The user decides when cleanup happens — after shipping, after review, or never.
+This is safe — it only removes pipeline artifacts, not other `.rhoai-qs/` contents. The user decides when cleanup happens — after shipping, after review, or never.
 
 ## Concurrency
 
 ### Different quickstarts
 
-Different quickstarts are different repos, so they each have their own `.rhoai/pipeline/`. Running skills for two quickstarts simultaneously is always safe.
+Different quickstarts are different repos, so they each have their own `.rhoai-qs/pipeline/`. Running skills for two quickstarts simultaneously is always safe.
 
 ### Same quickstart
 
-Running the same quickstart concurrently (e.g., two agents both running `rh-qs-deploy` for `spending-transaction-monitor`) is NOT safe. Both would write to the same `.rhoai/pipeline/deploy-spec.yaml`, causing race conditions.
+Running the same quickstart concurrently (e.g., two agents both running `rh-qs-deploy` for `spending-transaction-monitor`) is NOT safe. Both would write to the same `.rhoai-qs/pipeline/deploy-spec.yaml`, causing race conditions.
 
 This is a known constraint. The factory is designed for one pipeline execution per quickstart at a time.
 
 ## Resumability
 
-Since pipeline files are persistent, resumability works naturally. When a skill starts, it checks whether `.rhoai/pipeline/` already contains artifacts from a previous run:
+Since pipeline files are persistent, resumability works naturally. When a skill starts, it checks whether `.rhoai-qs/pipeline/` already contains artifacts from a previous run:
 
 ```
-1. Check if .rhoai/pipeline/ exists
+1. Check if .rhoai-qs/pipeline/ exists
 2. If it exists, check for artifacts from this skill and upstream skills
 3. If upstream handoff manifests exist:
    → Check content_hash against the current upstream file (see below)
    → If hashes match: offer to resume from current stage
    → If hashes differ: warn that upstream has changed, offer to re-run
-   → Or start fresh (rm -rf .rhoai/pipeline/)
+   → Or start fresh (rm -rf .rhoai-qs/pipeline/)
 4. If this skill's own spec exists:
    → Offer to reuse the existing spec
    → Or regenerate

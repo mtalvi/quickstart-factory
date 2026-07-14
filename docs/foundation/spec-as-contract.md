@@ -15,7 +15,7 @@ Analyze → Generate Spec → User Approval → Validate Spec (parallel) → Ref
 | Phase | Actor | Description |
 |-------|-------|-------------|
 | **Analyze** | Main agent | Read inputs (PRD, prior manifests, KB files), reason about the problem |
-| **Generate Spec** | Main agent | Write the spec YAML to `.rhoai/pipeline/<skill>-spec.yaml` |
+| **Generate Spec** | Main agent | Write the spec YAML to `.rhoai-qs/pipeline/<skill>-spec.yaml` |
 | **User Approval** | User | Review the spec, approve or request changes (see [acceptance-criteria.md](acceptance-criteria.md)) |
 | **Validate Spec** | Validator subagent(s) | Check spec correctness in parallel (e.g., chart versions exist, schemas are valid) |
 | **Refine** | Main agent | Incorporate validation feedback, write `<skill>-spec-refined.yaml` |
@@ -26,7 +26,7 @@ Analyze → Generate Spec → User Approval → Validate Spec (parallel) → Ref
 
 - **Separates reasoning from file edits** — the agent reasons about *what* to do in the spec phase, then a focused subagent applies changes without re-reasoning.
 - **Catches errors before implementation** — parallel validators check the spec for consistency, missing fields, and invalid references before any code is written.
-- **Creates an audit trail** — the spec YAML in `.rhoai/pipeline/` documents every decision made during analysis.
+- **Creates an audit trail** — the spec YAML in `.rhoai-qs/pipeline/` documents every decision made during analysis.
 - **Enables user control** — the user reviews and approves the plan before implementation begins.
 
 ## Spec File Location
@@ -34,8 +34,8 @@ Analyze → Generate Spec → User Approval → Validate Spec (parallel) → Ref
 All specs are written to the project's pipeline directory:
 
 ```
-.rhoai/pipeline/<skill>-spec.yaml          # Initial spec
-.rhoai/pipeline/<skill>-spec-refined.yaml   # After validation feedback
+.rhoai-qs/pipeline/<skill>-spec.yaml          # Initial spec
+.rhoai-qs/pipeline/<skill>-spec-refined.yaml   # After validation feedback
 ```
 
 See [pipeline-convention.md](pipeline-convention.md) for the full scoping rules.
@@ -55,7 +55,7 @@ created_at: "2026-07-01T12:00:00Z"
 # ─── Inputs ──────────────────────────────────────────────
 inputs:
   prior_manifests:              # Pipeline files from previous skills
-    - path: .rhoai/pipeline/scaffold-manifest.yaml
+    - path: .rhoai-qs/pipeline/scaffold-manifest.yaml
       skill: rh-qs-scaffold
   user_inputs: []               # Any direct user-provided data
 
@@ -164,7 +164,7 @@ After the spec is generated, one or more validator subagents check it in paralle
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│  Main agent writes .rhoai/pipeline/<skill>-spec.yaml      │
+│  Main agent writes .rhoai-qs/pipeline/<skill>-spec.yaml      │
 │                                                          │
 │  Spawn validator subagents in parallel:                  │
 │  ┌─────────────────┐  ┌─────────────────┐               │
@@ -212,7 +212,7 @@ When validators find blockers, the main agent:
 
 1. Reads validation results
 2. Fixes the spec (not code — nothing has been implemented yet)
-3. Writes `.rhoai/pipeline/<skill>-spec-refined.yaml`
+3. Writes `.rhoai-qs/pipeline/<skill>-spec-refined.yaml`
 4. Re-runs validators on the refined spec
 5. Max 2 refinement iterations per skill (configurable in `spec-template.md`)
 
@@ -399,5 +399,5 @@ Each skill's `spec-template.md` extends the common fields above with skill-speci
 
 - **[skill-directory-structure.md](skill-directory-structure.md)** — each skill's `spec-template.md` file defines the skill-specific fields
 - **[acceptance-criteria.md](acceptance-criteria.md)** — details when user approval is required and how criteria are validated
-- **[pipeline-convention.md](pipeline-convention.md)** — defines the `.rhoai/pipeline/` directory where specs and manifests are written
+- **[pipeline-convention.md](pipeline-convention.md)** — defines the `.rhoai-qs/pipeline/` directory where specs and manifests are written
 - **[pipeline-contracts.md](pipeline-contracts.md)** — defines the output manifests that consuming skills expect (downstream of specs)

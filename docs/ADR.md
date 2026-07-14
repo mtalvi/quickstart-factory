@@ -354,7 +354,7 @@ Phase 3: FIX LOOP for CRITICAL + HIGH findings:
          └──────────────────────────────────────────┘
 
 Phase 4: Generate security report → /tmp/qs-security-report.yaml
-         Persist to {project}/.rhoai/security-report.yaml
+         Persist to {project}/.rhoai-qs/security-report.yaml
 ```
 
 **Security checklist areas:**
@@ -418,7 +418,7 @@ Phase 4:  DEBUG LOOP (per unhealthy resource, dependency order):
           └──────────────────────────────────────────────────┘
 
 Phase 5:  e2e-tester → run TEST-PLAN.md (no re-entry to debug on E2E fail)
-Phase 6:  Final report → copy to {project}/.rhoai/deploy-report.yaml
+Phase 6:  Final report → copy to {project}/.rhoai-qs/deploy-report.yaml
 ```
 
 **Fix boundary rules:**
@@ -429,7 +429,7 @@ Phase 6:  Final report → copy to {project}/.rhoai/deploy-report.yaml
 
 **Attempt tracking:** Debug and fix files append `attempt_N` keys — never overwrite previous attempts. The debugger reviews previous attempts before proposing a new fix to avoid repeating failed approaches.
 
-**Output:** `/tmp/qs-deploy-state.yaml` (final health state), `{project}/.rhoai/deploy-report.yaml` (persistent copy)
+**Output:** `/tmp/qs-deploy-state.yaml` (final health state), `{project}/.rhoai-qs/deploy-report.yaml` (persistent copy)
 
 **Guardrails:** Namespace isolation (every `oc`/`helm` command must use `-n <namespace>`), don't change application intent, dependency-order debugging (fix leaves first then work up), max 3 attempts per resource.
 
@@ -541,8 +541,8 @@ Phase 1: state-detector scans the repo for evidence of each stage:
          │ Stage 3 (Scaffold):   .github/workflows/ exists?     │
          │ Stage 4 (Implement):  packages/api/src/main.py?      │
          │ Stage 5 (Deploy):     deploy/helm/? compose.yml?     │
-         │ Stage 6 (Security):   .rhoai/security-report.yaml?   │
-         │ Stage 7 (Debug):      .rhoai/deploy-report.yaml?     │
+         │ Stage 6 (Security):   .rhoai-qs/security-report.yaml?   │
+         │ Stage 7 (Debug):      .rhoai-qs/deploy-report.yaml?     │
          │ Stage 8 (Document):   README.md beyond placeholder?  │
          │ Stage 9 (Ship):       Open PR exists?                │
          └──────────────────────────────────────────────────────┘
@@ -607,7 +607,7 @@ Phase 3: Main agent applies the update plan:
            entries, all tags reference valid components
 
 Phase 4: Generate extraction report → /tmp/qs-kb-extraction-report.yaml
-         Persist to {project}/.rhoai/kb-extraction-report.yaml
+         Persist to {project}/.rhoai-qs/kb-extraction-report.yaml
 ```
 
 **Chain of Density summary format:** Each KB file's `summary:` field uses a 4-sentence Chain of Density summary — progressively denser sentences that pack maximum information for scored retrieval without loading the full file.
@@ -895,7 +895,7 @@ Every new skill introduced in this ADR (rh-qs-security, rh-qs-debug-and-deploy, 
 - Subagent logging hook provides visibility into orchestration
 - Each skill's `subagents/README.md` documents all subagent roles clearly
 - `make skills-check` continues to validate all skills against agentskills.io spec
-- Persistent reports (`.rhoai/deploy-report.yaml`, `.rhoai/security-report.yaml`) survive beyond `/tmp/`
+- Persistent reports (`.rhoai-qs/deploy-report.yaml`, `.rhoai-qs/security-report.yaml`) survive beyond `/tmp/`
 - Phase-gated rollout allows validating each change before the next
 
 ---
