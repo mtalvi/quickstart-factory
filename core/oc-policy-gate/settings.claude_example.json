@@ -3,7 +3,10 @@
     "deny": [
       "Read(./.claude/hooks/**)",
       "Edit(./.claude/hooks/**)",
-      "Write(./.claude/hooks/**)"
+      "Write(./.claude/hooks/**)",
+      "Read(./core/oc-policy-gate/**)",
+      "Edit(./core/oc-policy-gate/**)",
+      "Write(./core/oc-policy-gate/**)"
     ]
   },
   "hooks": {
