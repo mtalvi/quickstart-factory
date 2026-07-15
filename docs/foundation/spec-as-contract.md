@@ -126,6 +126,9 @@ components:
       configuration:
         # Skill-specific config (chart versions, image tags, etc.)
 
+    kb_sources:
+      - "<path to knowledge-base file that informed this component's approach>"
+
     dependencies:
       - component: other-component
         reason: "Why this dependency exists"
@@ -285,6 +288,8 @@ components:
         model_id: meta-llama/Llama-3.3-70B-Instruct
         gpu_count: 2
         gpu_type: nvidia.com/gpu
+    kb_sources:
+      - core/knowledge-base/components/vllm-serving-patterns.md
     dependencies: []
 
   vector-db:
@@ -299,6 +304,8 @@ components:
       configuration:
         helm_chart: ai-architecture-charts/pgvector:0.2.1
         storage: 20Gi
+    kb_sources:
+      - core/knowledge-base/components/pgvector-patterns.md
     dependencies: []
 
   api-server:
@@ -313,6 +320,8 @@ components:
       configuration:
         framework: fastapi
         python_version: "3.12"
+    kb_sources:
+      - core/knowledge-base/components/fastapi-patterns.md
     dependencies:
       - component: llm-service
         reason: "API calls LLM for inference"
@@ -331,6 +340,8 @@ components:
       configuration:
         framework: react
         node_version: "22"
+    kb_sources:
+      - core/knowledge-base/components/react-frontend-patterns.md
     dependencies:
       - component: api-server
         reason: "UI calls API endpoints"
