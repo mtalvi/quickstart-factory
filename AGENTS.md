@@ -92,6 +92,19 @@ python3 core/skills/gh-backlog-reader/scripts/read_backlog.py --label Acknowledg
 
 For building a new quickstart end-to-end, see [docs/NEW_QUICKSTART_SKILLS.md](../docs/NEW_QUICKSTART_SKILLS.md). Key rule: **`rh-qs-document` runs only after `rh-qs-verify-deploy`**. Agents do not run `oc`/`kubectl` — use Helm/Makefile targets per **`rh-qs-secure`**.
 
+## Foundation Docs (for skill implementation)
+
+When implementing or upgrading skills (EPICs 04+), consult these convention docs in `docs/foundation/`:
+
+| Doc | What it defines | When to use |
+|-----|----------------|-------------|
+| `skill-directory-structure.md` | Canonical layout: SKILL.md, subagents/, reasoning-guardrails.md, spec-template.md | Creating or restructuring a skill directory |
+| `spec-as-contract.md` | YAML spec format, validation flow, refinement loop, staleness detection | Writing a spec-template.md or implementing the spec → validate → implement workflow |
+| `pipeline-convention.md` | `.rhoai-qs/pipeline/` directory, file categories, cleanup, resumability | Reading/writing any pipeline file |
+| `pipeline-contracts.md` | YAML schemas for all 7 handoff files (architecture-spec through doc-manifest) | Producing or consuming a handoff manifest between skills |
+| `reasoning-guardrails-template.md` | Template for reasoning-guardrails.md — concern areas, not checklists | Writing a skill's reasoning-guardrails.md |
+| `acceptance-criteria.md` | User-approved acceptance criteria in specs, approval matrix, post-validation | Adding acceptance_criteria to a spec or implementing post-validation |
+
 ## Skill Execution
 
 ### gh-backlog-reader
