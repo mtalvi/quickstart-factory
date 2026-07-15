@@ -126,6 +126,9 @@ components:
       configuration:
         # Skill-specific config (chart versions, image tags, etc.)
 
+    kb_sources:
+      - "<path to knowledge-base file that informed this component's approach>"
+
     dependencies:
       - component: other-component
         reason: "Why this dependency exists"
@@ -317,6 +320,8 @@ components:
       configuration:
         framework: fastapi
         python_version: "3.12"
+    kb_sources:
+      - core/knowledge-base/components/fastapi-patterns.md
     dependencies:
       - component: llm-service
         reason: "API calls LLM for inference"
@@ -335,6 +340,8 @@ components:
       configuration:
         framework: react
         node_version: "22"
+    kb_sources:
+      - core/knowledge-base/components/react-frontend-patterns.md
     dependencies:
       - component: api-server
         reason: "UI calls API endpoints"
