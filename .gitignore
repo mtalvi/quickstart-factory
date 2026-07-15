@@ -19,7 +19,8 @@ __pycache__/
 # Local AI client runtime/config
 .claude/
 .codex/
-.cursor/
+.cursor/*
+!.cursor/rules/
 .gemini/
 
 # Generated output (blog drafts, reports, etc.)
