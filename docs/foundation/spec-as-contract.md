@@ -285,6 +285,8 @@ components:
         model_id: meta-llama/Llama-3.3-70B-Instruct
         gpu_count: 2
         gpu_type: nvidia.com/gpu
+    kb_sources:
+      - core/knowledge-base/components/vllm-serving-patterns.md
     dependencies: []
 
   vector-db:
@@ -299,6 +301,8 @@ components:
       configuration:
         helm_chart: ai-architecture-charts/pgvector:0.2.1
         storage: 20Gi
+    kb_sources:
+      - core/knowledge-base/components/pgvector-patterns.md
     dependencies: []
 
   api-server:

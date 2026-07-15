@@ -67,6 +67,8 @@ components:
       configuration:
         helm_chart: "<chart-org>/<chart-name>:<version>"
         # ... skill-specific config (model_id, gpu_count, storage, framework, etc.)
+    kb_sources:
+      - "<path to knowledge-base file that informed this component's approach>"
     dependencies:
       - component: "<other-component-name>"
         reason: "<why this dependency exists>"
@@ -91,6 +93,7 @@ dependencies:
 | `components.<name>.approach.strategy` | string | yes | What the architect decided for this component |
 | `components.<name>.approach.rationale` | string | yes | Why this approach was chosen |
 | `components.<name>.implementation.configuration` | map | yes | Skill-specific config (chart, model, GPU, etc.) |
+| `components.<name>.kb_sources` | list of strings | no | Knowledge base files that informed this component's approach. Lets downstream skills load proven patterns directly instead of re-running the knowledge scorer. |
 | `deployment_mode` | enum | yes | `helm`, `compose`, or `both` |
 | `architecture_diagram` | string | no | Mermaid diagram of the architecture |
 
