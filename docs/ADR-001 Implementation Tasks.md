@@ -73,7 +73,7 @@ PHASE 7 — EVALUATION & FINALIZATION
 
 ## EPIC-02: Hooks Infrastructure
 
-**Description:** Set up project-level hooks for safety and automation. Integrate `oc-policy-gate` via git subtree, create the format-code hook, and create the subagent logging hook.
+**Description:** Set up project-level hooks for safety and automation. Integrate `oc-policy-gate` via git subtree.
 
 **Blocked by:** Nothing
 **Blocks:** All skill EPICs (hooks apply during skill execution)
@@ -81,10 +81,8 @@ PHASE 7 — EVALUATION & FINALIZATION
 | ID | Task | Description |
 |----|------|-------------|
 | 02-01 | Integrate oc-policy-gate via git subtree | Fetch the `oc-policy-gate` repo into the project using `git subtree`. Configure it as `.cursor/hooks/oc-policy-gate.sh`. Validate it enforces namespace-scoped `oc`/`kubectl`/`helm` commands and blocks destructive operations. |
-| 02-02 | Create format-code hook | Implement `.cursor/hooks/format-code.sh` that auto-formats Python files with `ruff` and TypeScript files with `prettier` after every file edit. |
-| 02-03 | Create subagent logging hook | Implement `.cursor/hooks/log-subagent.sh` that logs which subagents are spawned, with timestamps and skill context, for debugging orchestration issues. |
-| 02-04 | Create hooks.json configuration | Write `.cursor/hooks.json` wiring all 3 hooks with correct matchers and `failClosed` settings. |
-| 02-05 | Create hook test scripts | Write `.cursor/hooks/test-format-code.sh`, `.cursor/hooks/test-oc-policy-gate.sh`, and `.cursor/hooks/test-log-subagent.sh` with comprehensive test cases covering edge cases (pipes, subshells, quoted args). |
+| 02-02 | Create hooks.json configuration | Write `.cursor/hooks.json` wiring the oc-policy-gate hook with correct matchers and `failClosed` settings. |
+| 02-03 | Create hook test scripts | Write `.cursor/hooks/test-oc-policy-gate.sh` with comprehensive test cases covering edge cases (pipes, subshells, quoted args). |
 
 ---
 
@@ -183,7 +181,8 @@ PHASE 7 — EVALUATION & FINALIZATION
 | 07-06 | Create spec-template.md | Define the implementation spec format (`/tmp/implementation-spec.yaml`) — endpoints, schemas, services, DB models, UI routes. |
 | 07-07 | Create reasoning-guardrails.md | Define concern areas: vertical slice (thinnest path), hardcoded values allowed for MVP, error handling, async consistency, security basics. |
 | 07-08 | Restructure SKILL.md as orchestrator | Rewrite SKILL.md to orchestrate the test loop: test-writer generates tests → main agent runs `make test` → routes failures to relevant implementer subagent → implementer fixes → re-run tests → if still failing, resume test-writer to review. Max 3 full loops. Main agent NEVER fixes code directly. |
-| 07-09 | Validate with skill-validator | Run `skill-validator --strict` against the updated SKILL.md. |
+| 07-09 | Create review sub-agent | Write the review sub-agent prompt that reviews implementation against the spec and code quality best practices, and runs formatting checks (`ruff` for Python, `prettier` for TypeScript). All checks run once after implementation edits are complete, not per-edit. _(Formatting was originally a per-edit hook in EPIC-02. Moved here because a per-edit hook disrupts implementation sub-agent continuity by triggering repeated failures on each edit. Running it once during review is both more reliable and more token-efficient.)_ |
+| 07-10 | Validate with skill-validator | Run `skill-validator --strict` against the updated SKILL.md. |
 
 ---
 

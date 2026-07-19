@@ -626,33 +626,18 @@ Phase 4: Generate extraction report → /tmp/qs-kb-extraction-report.yaml
 {
   "version": 1,
   "hooks": {
-    "afterFileEdit": [
-      {
-        "command": ".cursor/hooks/format-code.sh",
-        "matcher": "\\.(py|ts|tsx)$"
-      }
-    ],
     "beforeShellExecution": [
       {
         "command": ".cursor/hooks/oc-policy-gate.sh",
         "matcher": "\\boc\\b|\\bkubectl\\b|\\bhelm\\b",
         "failClosed": true
       }
-    ],
-    "subagentStart": [
-      {
-        "command": ".cursor/hooks/log-subagent.sh"
-      }
     ]
   }
 }
 ```
 
-**Hook 1: `format-code.sh`** — Auto-format Python (ruff) and TypeScript (prettier) after every file edit.
-
-**Hook 2: `oc-policy-gate.sh`** — Provided by `oc-policy-gate` (fetched via `git subtree`). Enforces namespace-scoped oc/kubectl/helm commands, blocks destructive cluster operations, and hard-denies missing `-n` flag and output redirects (`>`, `>>`).
-
-**Hook 3: `log-subagent.sh`** — Log which subagents are spawned for debugging orchestration issues.
+**`oc-policy-gate.sh`** — Provided by `oc-policy-gate` (fetched via `git subtree`). Enforces namespace-scoped oc/kubectl/helm commands, blocks destructive cluster operations, and hard-denies missing `-n` flag and output redirects (`>`, `>>`).
 
 Each hook requires a test script (`.cursor/hooks/test-<name>.sh`) with comprehensive test cases covering verbs, namespaces, pipes, subshells, and edge cases.
 
@@ -892,7 +877,6 @@ Every new skill introduced in this ADR (rh-qs-security, rh-qs-debug-and-deploy, 
 
 ### Mitigations
 
-- Subagent logging hook provides visibility into orchestration
 - Each skill's `subagents/README.md` documents all subagent roles clearly
 - `make skills-check` continues to validate all skills against agentskills.io spec
 - Persistent reports (`.rhoai-qs/deploy-report.yaml`, `.rhoai-qs/security-report.yaml`) survive beyond `/tmp/`
