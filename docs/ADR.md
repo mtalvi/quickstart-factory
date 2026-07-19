@@ -626,12 +626,6 @@ Phase 4: Generate extraction report → /tmp/qs-kb-extraction-report.yaml
 {
   "version": 1,
   "hooks": {
-    "afterFileEdit": [
-      {
-        "command": ".cursor/hooks/format-code.sh",
-        "matcher": "\\.(py|ts|tsx)$"
-      }
-    ],
     "beforeShellExecution": [
       {
         "command": ".cursor/hooks/oc-policy-gate.sh",
@@ -643,9 +637,7 @@ Phase 4: Generate extraction report → /tmp/qs-kb-extraction-report.yaml
 }
 ```
 
-**Hook 1: `format-code.sh`** — Auto-format Python (ruff) and TypeScript (prettier) after every file edit.
-
-**Hook 2: `oc-policy-gate.sh`** — Provided by `oc-policy-gate` (fetched via `git subtree`). Enforces namespace-scoped oc/kubectl/helm commands, blocks destructive cluster operations, and hard-denies missing `-n` flag and output redirects (`>`, `>>`).
+**`oc-policy-gate.sh`** — Provided by `oc-policy-gate` (fetched via `git subtree`). Enforces namespace-scoped oc/kubectl/helm commands, blocks destructive cluster operations, and hard-denies missing `-n` flag and output redirects (`>`, `>>`).
 
 Each hook requires a test script (`.cursor/hooks/test-<name>.sh`) with comprehensive test cases covering verbs, namespaces, pipes, subshells, and edge cases.
 
