@@ -32,6 +32,7 @@ Produce a validated Product Requirements Document (PRD) at `data/prds/<slug>.md`
 | [reasoning-guardrails.md](./reasoning-guardrails.md) | Phase 7 — PRD validation and refinement |
 | [spec-template.md](./spec-template.md) | Phase 4 — generating the discovery spec |
 | [output-templates.md](./output-templates.md) | Phase 8 — writing the final PRD |
+| [references/gap-analysis-template.md](./references/gap-analysis-template.md) | Gap analysis mode only |
 
 **Subagents read (pass by file path only — do NOT read these):**
 
