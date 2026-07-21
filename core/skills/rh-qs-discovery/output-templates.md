@@ -1,12 +1,14 @@
 ---
-description: Output format definitions for rh-qs-discovery artifacts
+description: PRD output format definition for rh-qs-discovery
 ---
 
 # Discovery Output Templates
 
-This document defines the format of artifacts produced by rh-qs-discovery. The main agent and the prd-structurer subagent reference this document to ensure consistent output structure.
+This document defines the PRD format produced by rh-qs-discovery. The main agent and the prd-structurer subagent reference this document to ensure consistent output structure.
 
-## 1. PRD Template
+For the gap analysis report format, see [references/gap-analysis-template.md](./references/gap-analysis-template.md).
+
+## PRD Template
 
 **Location:** `data/prds/<slug>.md`
 
@@ -89,48 +91,3 @@ Every PRD must have substantive content in these sections before it can be appro
 | Constraints and non-goals | At least one explicit non-goal |
 
 `Open questions` may be empty — that means the PRD is fully resolved.
-
-## 2. Gap Analysis Report Template
-
-**Location:** `data/reports/gap-analysis-<YYYY-MM-DD>.md`
-
-```markdown
-# Quickstart Gap Analysis — <Date>
-
-## Backlog Summary
-
-- Open issues: <count>
-- By label: <breakdown>
-- By industry: <breakdown>
-
-## Coverage Matrix
-
-| Industry | Current quickstarts | Gaps |
-|----------|-------------------|------|
-| Financial services | ... | ... |
-| Healthcare | ... | ... |
-| Manufacturing | ... | ... |
-
-## Technology Coverage
-
-| AI Capability | Covered by | Missing |
-|---------------|-----------|---------|
-| RAG | ... | ... |
-| Agents | ... | ... |
-| Classification | ... | ... |
-
-## Proposed New Quickstarts
-
-### 1. <Proposed title>
-- **Industry:** ...
-- **AI capability:** ...
-- **Rationale:** Why this fills a gap
-- **Complexity estimate:** Low / Medium / High
-
-### 2. <Proposed title>
-...
-
-## Recommendations
-
-Prioritized list of 3-5 new quickstarts with rationale for ordering.
-```
